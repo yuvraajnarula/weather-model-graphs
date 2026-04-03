@@ -1,0 +1,22 @@
+{
+    "graph_type": "icosahedral_global",
+    "coordinate_system": "3d_cartesian",
+    "spatial_units": "unit_sphere_normalized",
+    "hierarchy": {
+        "levels": 3,
+        "is_hierarchical": true,
+        "inter_level_edges": "present"
+    },
+    "edge_features": {
+        "m2m": [
+            "distance",
+            "tan_dx",
+            "tan_dy"
+        ],
+        "g2m": [
+            "barycentric_weights",
+            "spherical_distance"
+        ]
+    },
+    "notes": "Compliant with Neural-LAM 3D Cartesian validation path"
+}
