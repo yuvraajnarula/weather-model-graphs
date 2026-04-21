@@ -2,7 +2,7 @@ import argparse
 import json
 import time
 import tracemalloc
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -56,16 +56,20 @@ def run_benchmark(
         else:
             print()
 
-        results.append({
-            "grid_points": num_nodes,
-            "runtime_s": duration,
-            "peak_memory_mb": peak_mb,
-        })
+        results.append(
+            {
+                "grid_points": num_nodes,
+                "runtime_s": duration,
+                "peak_memory_mb": peak_mb,
+            }
+        )
 
     return results
 
 
-def plot_runtime_scaling(results: List[Dict[str, float]], archetype: str, output_path: str):
+def plot_runtime_scaling(
+    results: List[Dict[str, float]], archetype: str, output_path: str
+):
     """Create a scaling plot for runtime vs number of grid points."""
     grid_points = [r["grid_points"] for r in results]
     times = [r["runtime_s"] for r in results]
@@ -75,7 +79,9 @@ def plot_runtime_scaling(results: List[Dict[str, float]], archetype: str, output
 
     # Add O(N) reference line fitted to the first point
     ref_linear = [times[0] * (gp / grid_points[0]) for gp in grid_points]
-    plt.plot(grid_points, ref_linear, linestyle="--", color="gray", label="O(N) Reference")
+    plt.plot(
+        grid_points, ref_linear, linestyle="--", color="gray", label="O(N) Reference"
+    )
 
     plt.title(f"Graph Creation Runtime Scaling: {archetype}")
     plt.xlabel("Number of Input Grid Nodes")
@@ -87,12 +93,16 @@ def plot_runtime_scaling(results: List[Dict[str, float]], archetype: str, output
     print(f"Runtime scaling plot saved to {output_path}")
 
 
-def plot_memory_scaling(results: List[Dict[str, float]], archetype: str, output_path: str):
+def plot_memory_scaling(
+    results: List[Dict[str, float]], archetype: str, output_path: str
+):
     """Create a scaling plot for peak memory vs number of grid points."""
     # Filter out results without memory data (should not happen if track_memory=True)
     memory_results = [r for r in results if r["peak_memory_mb"] is not None]
     if not memory_results:
-        raise ValueError("No memory data available. Run with --track-memory to collect memory profiles.")
+        raise ValueError(
+            "No memory data available. Run with --track-memory to collect memory profiles."
+        )
 
     grid_points = [r["grid_points"] for r in memory_results]
     memory = [r["peak_memory_mb"] for r in memory_results]
@@ -111,19 +121,36 @@ def plot_memory_scaling(results: List[Dict[str, float]], archetype: str, output_
 
 def main():
     parser = argparse.ArgumentParser(description="Benchmark graph creation scaling.")
-    parser.add_argument("--min-N", type=int, default=50, help="Minimum grid size N (NxN nodes)")
-    parser.add_argument("--max-N", type=int, default=400, help="Maximum grid size N (NxN nodes)")
-    parser.add_argument("--num-steps", type=int, default=8, help="Number of intermediate steps")
+    parser.add_argument(
+        "--min-N", type=int, default=50, help="Minimum grid size N (NxN nodes)"
+    )
+    parser.add_argument(
+        "--max-N", type=int, default=400, help="Maximum grid size N (NxN nodes)"
+    )
+    parser.add_argument(
+        "--num-steps", type=int, default=8, help="Number of intermediate steps"
+    )
     parser.add_argument(
         "--archetype",
         choices=["keisler", "oskarsson_hierarchical", "graphcast"],
         default="keisler",
         help="Graph archetype to create",
     )
-    parser.add_argument("--output-plot-runtime", type=str, default="runtime_scaling.png", help="Output file for runtime plot")
-    parser.add_argument("--output-plot-memory", type=str, help="Output file for memory scaling plot (requires --track-memory)")
+    parser.add_argument(
+        "--output-plot-runtime",
+        type=str,
+        default="runtime_scaling.png",
+        help="Output file for runtime plot",
+    )
+    parser.add_argument(
+        "--output-plot-memory",
+        type=str,
+        help="Output file for memory scaling plot (requires --track-memory)",
+    )
     parser.add_argument("--output-json", type=str, help="Save raw results to JSON file")
-    parser.add_argument("--track-memory", action="store_true", help="Profile peak memory usage")
+    parser.add_argument(
+        "--track-memory", action="store_true", help="Profile peak memory usage"
+    )
     parser.add_argument("--show", action="store_true", help="Show plots interactively")
 
     args = parser.parse_args()
