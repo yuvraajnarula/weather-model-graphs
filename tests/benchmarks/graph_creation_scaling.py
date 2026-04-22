@@ -31,7 +31,7 @@ def run_benchmark(
     results = []
 
     for n in Ns:
-        num_nodes = n * n
+        num_nodes = int(n * n)  # convert to Python int
         print(f"Testing N={n:4d} ({num_nodes:7d} nodes)...", end="", flush=True)
 
         xy = test_utils.create_fake_xy(N=n)
@@ -47,7 +47,7 @@ def run_benchmark(
         peak_mb = None
         if track_memory:
             _, peak = tracemalloc.get_traced_memory()
-            peak_mb = peak / (1024 * 1024)
+            peak_mb = float(peak) / (1024 * 1024)  # convert to float
             tracemalloc.stop()
 
         print(f" {duration:.3f} seconds.", end="")
@@ -56,13 +56,11 @@ def run_benchmark(
         else:
             print()
 
-        results.append(
-            {
-                "grid_points": num_nodes,
-                "runtime_s": duration,
-                "peak_memory_mb": peak_mb,
-            }
-        )
+        results.append({
+            "grid_points": num_nodes,
+            "runtime_s": duration,
+            "peak_memory_mb": peak_mb,
+        })
 
     return results
 
