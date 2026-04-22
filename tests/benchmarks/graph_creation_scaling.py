@@ -31,7 +31,7 @@ def run_benchmark(
     results = []
 
     for n in Ns:
-        num_nodes = n * n
+        num_nodes = int(n * n)
         print(f"Testing N={n:4d} ({num_nodes:7d} nodes)...", end="", flush=True)
 
         xy = test_utils.create_fake_xy(N=n)
